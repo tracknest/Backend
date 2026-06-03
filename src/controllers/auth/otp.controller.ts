@@ -5,7 +5,7 @@ import { sendOtpEmail, sendSignupEmail } from "../../email/emailService.ts";
 import { pendingRegistrations } from "./signup.controller.ts";
 import { pendingResets } from "./password.controller.ts";
 
-// ─── Verify OTP ───────────────────────────────────────────────────────────────
+
 export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, otp } = req.body;
