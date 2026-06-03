@@ -7,10 +7,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const isDev = process.env.NODE_ENV !== "production";
-const routeExtension = isDev ? "*.ts" : "*.js";
-const routesDir = isDev ? "src" : "dist";                                          // ← CHANGED
-const routesGlob = path.join(process.cwd(), routesDir, "routes", routeExtension); // ← CHANGED
+const routesGlob = path.join(process.cwd(), "src", "routes", "*.ts"); // ← CHANGED
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -75,9 +72,7 @@ export default (app: Express): void => {
       (swaggerSpec as { paths?: object }).paths ?? {},
     ).length;
 
-    console.log(
-      `[swagger] Docs available at http://localhost:${process.env.PORT ?? 5000}/api-docs`,
-    );
+    console.log(`[swagger] Docs available at https://backend-ed2z.onrender.com/api-docs`);
     console.log(`[swagger] Routes glob  : ${routesGlob}`);
     console.log(`[swagger] Paths found  : ${pathCount}`);
 
