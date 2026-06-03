@@ -1,0 +1,11 @@
+export declare const depositTemplate: (firstName: string, amount: number, newBalance: number, ref?: string) => string;
+export declare const withdrawalTemplate: (firstName: string, amount: number, newBalance: number, ref?: string) => string;
+export declare const budgetAddedTemplate: (firstName: string, budgetName: string, limit: number) => string;
+export declare const budgetRemovedTemplate: (firstName: string, budgetName: string) => string;
+export declare const budgetDepositTemplate: (firstName: string, budgetName: string, amount: number, budgetBalance: number) => string;
+export declare const budgetWithdrawTemplate: (firstName: string, budgetName: string, amount: number, mainBalance: number) => string;
+export declare const goalAddedTemplate: (firstName: string, goalName: string, targetAmount: number, deadline?: string) => string;
+export declare const goalRemovedTemplate: (firstName: string, goalName: string) => string;
+export declare const goalDepositTemplate: (firstName: string, goalName: string, amount: number, savedSoFar: number, targetAmount: number) => string;
+export declare const goalWithdrawTemplate: (firstName: string, goalName: string, amount: number, mainBalance: number) => string;
+//# sourceMappingURL=finance.templates.d.ts.map
