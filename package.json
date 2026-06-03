@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-   "dev": "tsx watch src/index.ts",
-  "start": "tsx src/index.ts",
-  "build": "echo 'No build needed'",
-  "prepare": "husky install"
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "build": "echo 'No build needed'",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "src/**/*.{ts,js}": [
@@ -78,6 +78,7 @@
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "@types/winston": "^2.4.4",
+    "eslint": "^10.4.1",
     "husky": "^9.1.7",
     "jest": "^30.4.2",
     "lint-staged": "^17.0.5",

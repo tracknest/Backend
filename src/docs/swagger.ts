@@ -21,9 +21,12 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
+        url: "https://backend-ed2z.onrender.com",
+        description: "Production (Render)",
+      },
+      {
         url: process.env.API_URL ?? "http://localhost:5000",
-        description:
-          process.env.NODE_ENV === "production" ? "Production" : "Local",
+        description: "Local",
       },
     ],
     components: {
