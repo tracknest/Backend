@@ -9,7 +9,8 @@ const __dirname = path.dirname(__filename);
 
 const isDev = process.env.NODE_ENV !== "production";
 const routeExtension = isDev ? "*.ts" : "*.js";
-const routesGlob = path.join(process.cwd(), "src", "routes", routeExtension);
+const routesDir = isDev ? "src" : "dist";                                          // ← CHANGED
+const routesGlob = path.join(process.cwd(), routesDir, "routes", routeExtension); // ← CHANGED
 
 const options: swaggerJsdoc.Options = {
   definition: {
