@@ -15,25 +15,33 @@ export const signupTemplate = (firstName: string) =>
     <hr class="divider"/>
     <p class="text" style="font-size:13px;">If you didn't create this account, please <a href="mailto:support@tracknest.com" style="color:#4f8ef7;">contact support</a> immediately.</p>
   `,
-    `Welcome to TrackNest! Your account is ready.`
+    `Welcome to TrackNest! Your account is ready.`,
   );
 
-export const loginTemplate = (firstName: string, loginTime: string, ipAddress?: string) =>
+export const loginTemplate = (
+  firstName: string,
+  loginTime: string,
+  ipAddress?: string,
+) =>
   baseTemplate(
     `
     <p class="greeting">New login detected</p>
-    <p class="text">Hi ${firstName}, we noticed a new sign-in to your TrackNest account.</p>
-    <div class="card">
-      <div class="card-row"><span class="label">Time</span><span class="value">${loginTime}</span></div>
-      ${ipAddress ? `<div class="card-row"><span class="label">IP Address</span><span class="value">${ipAddress}</span></div>` : ""}
-    </div>
+    <p class="text">Dear ${firstName}, we noticed a new sign-in to your TrackNest account, at ${loginTime}</p>
+    <p class="text">Please if you did not initiate this action, contact our customer support 
+    on support@tracknest.com as your account might have been compromised.
+    </p>
+   
     <div class="warning">⚠️ If this wasn't you, reset your password immediately and contact our support team.</div>
     <a href="${process.env.CLIENT_URL}/settings/security" class="btn">Secure My Account</a>
   `,
-    `New login to your TrackNest account.`
+    `New login to your TrackNest account.`,
   );
 
-export const otpTemplate = (firstName: string, otp: string, expiresInMinutes = 10) =>
+export const otpTemplate = (
+  firstName: string,
+  otp: string,
+  expiresInMinutes = 10,
+) =>
   baseTemplate(
     `
     <p class="greeting">Your verification code</p>
@@ -44,7 +52,7 @@ export const otpTemplate = (firstName: string, otp: string, expiresInMinutes = 1
     </div>
     <div class="warning">🔒 TrackNest will never ask for this code via phone or email. Never share it.</div>
   `,
-    `Your TrackNest verification code: ${otp}`
+    `Your TrackNest verification code: ${otp}`,
   );
 
 export const forgotPasswordTemplate = (firstName: string, resetUrl: string) =>
@@ -57,7 +65,7 @@ export const forgotPasswordTemplate = (firstName: string, resetUrl: string) =>
     <p class="text" style="font-size:13px;">This link expires in <strong>1 hour</strong>. If you didn't request a password reset, you can safely ignore this email — your password won't change.</p>
     <p class="text" style="font-size:12px; color:#a0aec0;">Or copy this link: <br/><span style="color:#4f8ef7;">${resetUrl}</span></p>
   `,
-    `Reset your TrackNest password.`
+    `Reset your TrackNest password.`,
   );
 
 export const resetPasswordSuccessTemplate = (firstName: string) =>
@@ -68,7 +76,7 @@ export const resetPasswordSuccessTemplate = (firstName: string) =>
     <div class="warning">⚠️ If you did not make this change, contact support immediately and reset your password.</div>
     <a href="${process.env.CLIENT_URL}/login" class="btn">Login to Your Account</a>
   `,
-    `Your TrackNest password has been changed.`
+    `Your TrackNest password has been changed.`,
   );
 
 export const logoutTemplate = (firstName: string, logoutTime: string) =>
@@ -79,5 +87,5 @@ export const logoutTemplate = (firstName: string, logoutTime: string) =>
     <p class="text">If this wasn't you, your account may be compromised.</p>
     <a href="${process.env.CLIENT_URL}/login" class="btn">Login Again</a>
   `,
-    `You've been logged out of TrackNest.`
+    `You've been logged out of TrackNest.`,
   );
