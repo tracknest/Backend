@@ -17,7 +17,7 @@ import {
   getProfile,
   updateProfile,
 } from "../controllers/auth/profile.controller.ts";
-import { sendOtp, verifyOtp } from "../controllers/auth/otp.controller.ts";
+import { sendOtp, verifyOtp, otpResend } from "../controllers/auth/otp.controller.ts";
 
 const router = Router();
 
@@ -727,5 +727,53 @@ router.post("/otp/send", sendOtp);
  *         description: Internal server error
  */
 router.post("/otp/verify", verifyOtp);
+
+/**
+ * @openapi
+ * /api/v1/auth/otp/resend:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Resend OTP to user's email
+ *     description: |
+ *       Generates a new OTP (invalidating any previous one) and emails it to the user.
+ *       Always returns 200 to prevent email enumeration.
+ *       OTP expires in 15 minutes.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: john@example.com
+ *     responses:
+ *       200:
+ *         description: OTP resent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: OTP resent successfully
+ *       400:
+ *         description: Missing email field
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email is required
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/otp/resend", otpResend);
 
 export default router;

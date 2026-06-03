@@ -6,6 +6,8 @@ import { pendingRegistrations } from "./signup.controller.ts";
 import { pendingResets } from "./password.controller.ts";
 
 
+const OTP_EXPIRE_TIME = 15; // 15 minutes in milliseconds
+
 export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, otp } = req.body;
@@ -48,8 +50,6 @@ export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // ── Case 2: Password Reset (forgot password flow) ────────────────────────
-    // ✅ CHECK pendingResets Map (this was missing!)
     const pendingReset = pendingResets.get(normalizedEmail);
 
     if (pendingReset) {
@@ -65,7 +65,7 @@ export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
       pendingReset.isVerified = true;
       
       // Extend expiry time (give more time to complete reset)
-      pendingReset.otpExpires = Date.now() + 15 * 60 * 1000; // 15 more minutes
+      pendingReset.otpExpires = Date.now() + OTP_EXPIRE_TIME * 60 * 1000; // 15 more minutes
 
       pendingResets.set(normalizedEmail, pendingReset);
 
@@ -126,10 +126,10 @@ export const sendOtp = async (req: Request, res: Response): Promise<void> => {
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
 
     user.otp = otpHash;
-    user.otpExpires = Date.now() + 15 * 60 * 1000; // ✅ Changed to 15 minutes
+    user.otpExpires = Date.now() + OTP_EXPIRE_TIME * 60 * 1000; // ✅ Changed to 15 minutes
     await user.save();
 
-    await sendOtpEmail(user.email, user.first_name, otp, 15); // ✅ Changed to 15
+    await sendOtpEmail(user.email, user.first_name, otp, OTP_EXPIRE_TIME); // ✅ Changed to 15
 
     res.status(200).json({ message: "OTP sent successfully" });
   } catch (err) {
@@ -137,3 +137,36 @@ export const sendOtp = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const otpResend = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      res.status(400).json({ message: "Email is required" });
+      return;
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      res.status(200).json({ message: "OTP sent successfully" });
+      return;
+    }
+
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+    user.otp = otpHash;
+    user.otpExpires = Date.now() + OTP_EXPIRE_TIME * 60 * 1000; // ✅ Changed to 15 minutes
+    await user.save();
+
+    await sendOtpEmail(user.email, user.first_name, otp, OTP_EXPIRE_TIME); // ✅ Changed to 15
+
+    res.status(200).json({ message: "OTP resent successfully" });
+  } catch (err) {
+    console.error("[otpResend]", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
