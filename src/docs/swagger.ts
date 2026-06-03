@@ -46,7 +46,7 @@ const options: swaggerJsdoc.Options = {
 export const swaggerSpec = swaggerJsdoc(options);
 
 export default (app: Express): void => {
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== "production" || process.env.ENABLE_SWAGGER === "true") {
     app.use(
       "/api-docs",
       swaggerUi.serve,
