@@ -23,7 +23,7 @@ import errorHandler from "./middleware/errorHandler.middleware.ts";
 
 // ─── Required ENV Check ───────────────────────────────────────────────────────
 const REQUIRED_ENV = [
-  "MONGO_URI",
+  "DATABASE_URL",
   "JWT_SECRET",
   "SESSION_SECRET",
   "REDIS_URL",
@@ -111,7 +111,7 @@ app.use(errorHandler);
 // ─── Database ─────────────────────────────────────────────────────────────────
 const connectDB = async (): Promise<void> => {
   try {
-    await mongoose.connect(process.env.MONGO_URI!);
+    await mongoose.connect(process.env.DATABASE_URL!);
     logger.info("MongoDB connected");
   } catch (err) {
     logger.error("MongoDB connection error: " + err);
