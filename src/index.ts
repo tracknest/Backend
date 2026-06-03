@@ -58,7 +58,11 @@ io.on("connection", (socket) => {
 });
 
 // ─── Mongo Sanitize (manual — replaces express-mongo-sanitize) ───────────────
-const mongoSanitize = (req: express.Request, _res: express.Response, next: express.NextFunction): void => {
+const mongoSanitize = (
+  req: express.Request,
+  _res: express.Response,
+  next: express.NextFunction
+): void => {
   const sanitize = (obj: Record<string, unknown>): void => {
     for (const key of Object.keys(obj)) {
       if (key.startsWith("$") || key.includes(".")) {
@@ -76,38 +80,6 @@ const mongoSanitize = (req: express.Request, _res: express.Response, next: expre
   next();
 };
 
-// ─── Core Middleware (no Redis dependency) ────────────────────────────────────
-app.use(cors());
-app.use(helmet());
-app.use(compression());
-app.use(express.json({ limit: "10kb" }));
-app.use(express.urlencoded({ extended: true, limit: "10kb" }));
-app.use(mongoSanitize);
-app.use(hpp());
-
-// ─── Health Check ─────────────────────────────────────────────────────────────
-app.get("/health", (_req, res) => {
-  res.status(200).json({
-    status: "ok",
-    environment: process.env.NODE_ENV ?? "development",
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// ─── Routes ───────────────────────────────────────────────────────────────────
-app.use("/api/v1/auth", authRoutes);
-
-// ─── Swagger Docs ─────────────────────────────────────────────────────────────
-swaggerDocs(app);
-
-// ─── 404 Handler ──────────────────────────────────────────────────────────────
-app.use((_req, res) => {
-  res.status(404).json({ message: "Route not found" });
-});
-
-// ─── Global Error Handler ─────────────────────────────────────────────────────
-app.use(errorHandler);
-
 // ─── Database ─────────────────────────────────────────────────────────────────
 const connectDB = async (): Promise<void> => {
   try {
@@ -121,7 +93,7 @@ const connectDB = async (): Promise<void> => {
     } else {
       logger.warn(
         "⚠️  Running without MongoDB — DB-dependent routes will fail. " +
-          "Fix: whitelist your IP on MongoDB Atlas → Network Access.",
+          "Fix: whitelist your IP on MongoDB Atlas → Network Access."
       );
     }
   }
@@ -134,7 +106,16 @@ const startServer = async (): Promise<void> => {
   // 1. Connect Redis first — rate limiter and session store depend on it
   await connectRedis();
 
-  // 2. Rate limiter — created after Redis is ready
+  // 2. Core middleware — order matters: security → parsing → sanitization
+  app.use(cors());
+  app.use(helmet());
+  app.use(compression());
+  app.use(express.json({ limit: "10kb" }));         // ← body parsed HERE, before routes
+  app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+  app.use(mongoSanitize);
+  app.use(hpp());
+
+  // 3. Rate limiter — created after Redis is ready, registered before routes
   const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
@@ -147,7 +128,7 @@ const startServer = async (): Promise<void> => {
   });
   app.use(globalLimiter);
 
-  // 3. Session store — created after Redis is ready
+  // 4. Session store — created after Redis is ready, registered before routes
   app.use(
     session({
       store: new SessionRedisStore({
@@ -163,30 +144,53 @@ const startServer = async (): Promise<void> => {
         sameSite: "lax",
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       },
-    }),
+    })
   );
 
-  // 4. Passport — must come after session middleware
+  // 5. Passport — must come after session middleware
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // 5. Verify Cloudinary credentials
+  // 6. Health check — lightweight, no auth needed
+  app.get("/health", (_req, res) => {
+    res.status(200).json({
+      status: "ok",
+      environment: process.env.NODE_ENV ?? "development",
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  // 7. Routes — registered after all middleware is in place
+  app.use("/api/v1/auth", authRoutes);
+
+  // 8. Swagger docs
+  swaggerDocs(app);
+
+  // 9. 404 handler
+  app.use((_req, res) => {
+    res.status(404).json({ message: "Route not found" });
+  });
+
+  // 10. Global error handler — must be last
+  app.use(errorHandler);
+
+  // 11. Verify Cloudinary credentials
   await verifyCloudinary();
 
-  // 6. Attach Redis adapter to Socket.IO
+  // 12. Attach Redis adapter to Socket.IO
   const pubClient = redisClient;
   const subClient = redisClient.duplicate();
   await subClient.connect();
   io.adapter(createAdapter(pubClient, subClient));
   logger.info("Socket.IO Redis adapter attached");
 
-  // 7. Connect MongoDB — non-fatal in dev if Atlas IP not whitelisted
+  // 13. Connect MongoDB — non-fatal in dev if Atlas IP not whitelisted
   await connectDB();
 
-  // 8. Start listening
+  // 14. Start listening
   server.listen(PORT, () => {
     logger.info(
-      `Server running on port ${PORT} [${process.env.NODE_ENV ?? "development"}]`,
+      `Server running on port ${PORT} [${process.env.NODE_ENV ?? "development"}]`
     );
   });
 };

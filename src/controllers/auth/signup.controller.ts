@@ -24,24 +24,24 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // Prevent duplicate accounts (already verified users)
+  
     const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       res.status(409).json({ message: "Email is already registered" });
       return;
     }
 
-    // Generate OTP
+  
     const otp = crypto.randomInt(100000, 999999).toString();
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
 
-    // Store registration data in memory (NOT in the database yet)
+
     pendingRegistrations.set(normalizedEmail, {
       first_name,
       last_name,
       phone,
       email: normalizedEmail,
-      password, // will be hashed by mongoose pre-save hook when user is finally created
+      password,
       otpHash,
       otpExpires: Date.now() + 10 * 60 * 1000, // 10 minutes
     });

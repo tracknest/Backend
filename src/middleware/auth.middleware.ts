@@ -2,43 +2,41 @@ import type { Request, Response, NextFunction } from "express";
 import passport from "passport";
 import { isTokenBlocked } from "../utils/tokenBlocklist.ts";
 import type { IUser } from "../models/User.ts";
+import logger from "../config/logger.ts";
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const extractBearerToken = (req: Request): string | null => {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith("Bearer ")) return null;
+  return auth.split(" ")[1] ?? null;
+};
+
+// ─── Authenticate ─────────────────────────────────────────────────────────────
 export const authenticate = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const authHeader = req.headers.authorization;
+    const token = extractBearerToken(req);
 
-    // Check if Authorization header exists and is Bearer type
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       res.status(401).json({ message: "Unauthorized — no token provided" });
       return;
     }
 
-    const token = authHeader.split(" ")[1];
-
-    // Extra safety: ensure token actually exists after split
-    if (!token) {
-      res.status(401).json({ message: "Unauthorized — malformed token" });
-      return;
-    }
-
-    // Check if token is revoked/blocked
     const blocked = await isTokenBlocked(token);
     if (blocked) {
       res.status(401).json({ message: "Unauthorized — token has been revoked" });
       return;
     }
 
-    // Delegate JWT verification (signature + expiry) to Passport
     passport.authenticate(
       "jwt",
       { session: false },
       (err: Error | null, user: IUser | false) => {
         if (err) {
-          console.error("[authenticate]", err);
+          logger.error("[authenticate] " + err);
           res.status(500).json({ message: "Internal server error" });
           return;
         }
@@ -51,43 +49,35 @@ export const authenticate = async (
         req.user = user;
         next();
       }
-    )(req, res, next);
+    )(req, res);
   } catch (err) {
-    console.error("[authenticate]", err);
+    logger.error("[authenticate] " + err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
+// ─── Optional Authenticate ────────────────────────────────────────────────────
 export const optionalAuthenticate = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const authHeader = req.headers.authorization;
+    const token = extractBearerToken(req);
 
     // No token → proceed as guest
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      next();
-      return;
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    // Malformed token → treat as guest
     if (!token) {
       next();
       return;
     }
 
-    // If token is blocked, treat as guest (don't reject)
+    // Blocked token → treat as guest
     const blocked = await isTokenBlocked(token);
     if (blocked) {
       next();
       return;
     }
 
-    // Verify token with Passport
     passport.authenticate(
       "jwt",
       { session: false },
@@ -95,12 +85,12 @@ export const optionalAuthenticate = async (
         if (!err && user) {
           req.user = user;
         }
-        // Always continue (even if token is invalid)
+        // Always continue regardless of token validity
         next();
       }
-    )(req, res, next);
+    )(req, res);
   } catch (err) {
-    console.error("[optionalAuthenticate]", err);
-    next(); 
+    logger.error("[optionalAuthenticate] " + err);
+    next();
   }
 };
