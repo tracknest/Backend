@@ -20,7 +20,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       res.status(401).json({ message: "Invalid email or password" });
       return;
     }
-
+    
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       res.status(401).json({ message: "Invalid email or password" });

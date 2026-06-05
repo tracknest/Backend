@@ -18,3 +18,7 @@ export interface GoogleAuthDTO {
   email: string;
   avatarUrl?: string;
 }
+
+export interface MonoConnectDTO {
+  code: string;          
+}

@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import User from "../../models/User.ts";
 
+
 export const getProfile = async (req: Request, res: Response) => {
   try {
     const userId = (req.user as any)?._id;

@@ -13,10 +13,11 @@ export interface IUser extends Document {
   otpExpires?: number | undefined;
   comparePassword(candidatePassword: string): Promise<boolean>;
   isVerified: boolean;
+  role: "user" | "admin";
 }
 
 const UserSchema: Schema<IUser> = new Schema({
-  googleId: { type: String, unique: true, sparse: true }, // sparse allows multiple null values
+  googleId: { type: String, unique: true, sparse: true }, 
   email: { type: String, required: true, unique: true },
   password: { type: String },
   first_name: { type: String, required: true },
@@ -26,10 +27,12 @@ const UserSchema: Schema<IUser> = new Schema({
   otp: { type: String, default: undefined },
   otpExpires: { type: Number, default: undefined },
   isVerified: { type: Boolean, default: false },
+  role: { type: String, enum: ["user", "admin"], default: "user" },
+
 });
 
 UserSchema.pre<IUser>("save", async function (this: IUser) {
-  if (!this.password) return; // skip if no password (Google user)
+  if (!this.password) return;
   if (!this.isModified("password")) return;
   try {
     const salt = await bcrypt.genSalt(10);

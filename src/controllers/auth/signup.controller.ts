@@ -7,6 +7,7 @@ import { sendOtpEmail } from "../../email/emailService.ts";
 type PendingRegistration = SignupDTO & {
   otpHash: string;
   otpExpires: number;
+  role: "user" | "admin";
 };
 
 export const pendingRegistrations = new Map<string, PendingRegistration>();
@@ -14,7 +15,8 @@ export const pendingRegistrations = new Map<string, PendingRegistration>();
 // ─── Signup ───────────────────────────────────────────────────────────────────
 export const signup = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { first_name, last_name, phone, email, password }: SignupDTO = req.body;
+    const { first_name, last_name, phone, email, password }: SignupDTO =
+      req.body;
 
     // Reject if required fields are missing
     if (!first_name || !last_name || !email || !password || !phone) {
@@ -24,17 +26,16 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-  
     const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       res.status(409).json({ message: "Email is already registered" });
       return;
     }
 
-  
     const otp = crypto.randomInt(100000, 999999).toString();
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
 
+    const role: "user" | "admin" = "user";
 
     pendingRegistrations.set(normalizedEmail, {
       first_name,
@@ -43,14 +44,16 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       email: normalizedEmail,
       password,
       otpHash,
-      otpExpires: Date.now() + 10 * 60 * 1000, // 10 minutes
+      otpExpires: Date.now() + 10 * 60 * 1000,
+      role,
     });
 
     // Send OTP email
     await sendOtpEmail(normalizedEmail, first_name, otp, 10);
 
     res.status(200).json({
-      message: "OTP sent to your email. Please verify to complete registration.",
+      message:
+        "OTP sent to your email. Please verify to complete registration.",
     });
   } catch (err) {
     console.error("[signup]", err);
