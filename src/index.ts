@@ -15,6 +15,9 @@ import hpp from "hpp";
 import redisClient, { connectRedis } from "./config/redis.ts";
 import passport from "./config/passport.ts";
 import authRoutes from "./routes/auth.route.ts";
+import accountRoutes from "./routes/account.routes.ts";
+import budgetRoutes from "./routes/budget.routes.ts";
+import goalRoutes from "./routes/goal.routes.ts";
 import swaggerDocs from "./docs/swagger.ts";
 import mongoose from "mongoose";
 import { createAdapter } from "@socket.io/redis-adapter";
@@ -162,6 +165,9 @@ const startServer = async (): Promise<void> => {
 
   // 7. Routes — registered after all middleware is in place
   app.use("/api/v1/auth", authRoutes);
+  app.use("/api/v1/account", accountRoutes);
+  app.use("/api/v1/budgets", budgetRoutes);
+  app.use("/api/v1/goals", goalRoutes);
 
   // 8. Swagger docs
   swaggerDocs(app);

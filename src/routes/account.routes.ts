@@ -1,4 +1,3 @@
-// routes/account.routes.ts
 import { Router } from "express";
 import { authenticate } from "../middleware/auth.middleware.ts";
 import accountController from "../controllers/account/main.controller.ts";
