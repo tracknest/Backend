@@ -65,8 +65,8 @@ passport.use(
       } catch (err) {
         return done(err as Error);
       }
-    }
-  )
+    },
+  ),
 );
 
 // ─── Local Strategy ───────────────────────────────────────────────────────────
@@ -90,8 +90,8 @@ passport.use(
       } catch (err) {
         return done(err);
       }
-    }
-  )
+    },
+  ),
 );
 
 // ─── JWT Strategy ─────────────────────────────────────────────────────────────
@@ -116,8 +116,8 @@ passport.use(
       } catch (err) {
         return done(err, false);
       }
-    }
-  )
+    },
+  ),
 );
 
 export default passport;

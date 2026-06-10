@@ -20,5 +20,5 @@ export interface GoogleAuthDTO {
 }
 
 export interface MonoConnectDTO {
-  code: string;          
+  code: string;
 }

@@ -1,9 +1,13 @@
 import type { Request, Response } from "express";
 import type { CreateGoalDTO, DepositGoalDTO } from "../../dto/goal.dto.ts";
+import { Types } from "mongoose";
 import GoalAccountModel from "../../models/GoalAccount.model.ts";
 
-export const goalController = {
+const toObjectId = (id: string | string[] | undefined) =>
+  new Types.ObjectId(String(id));
 
+export const goalController = {
+  // POST /goals
   create: async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = (req.user as any)?.id ?? (req.user as any)?._id;
@@ -40,6 +44,7 @@ export const goalController = {
     }
   },
 
+  // GET /goals
   getAll: async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = (req.user as any)?.id ?? (req.user as any)?._id;
@@ -57,6 +62,7 @@ export const goalController = {
     }
   },
 
+  // GET /goals/:id
   getOne: async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = (req.user as any)?.id ?? (req.user as any)?._id;
@@ -66,7 +72,7 @@ export const goalController = {
       }
 
       const goal = await GoalAccountModel.findOne({
-        id: req.params.id,
+        _id: toObjectId(req.params.id),
         userId,
       });
       if (!goal) {
@@ -88,6 +94,7 @@ export const goalController = {
     }
   },
 
+  // POST /goals/:id/deposit
   deposit: async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = (req.user as any)?.id ?? (req.user as any)?._id;
@@ -103,11 +110,16 @@ export const goalController = {
       }
 
       const goal = await GoalAccountModel.findOne({
-        id: req.params.id,
+        _id: toObjectId(req.params.id),
         userId,
       });
       if (!goal) {
         res.status(404).json({ message: "Goal not found" });
+        return;
+      }
+
+      if (goal.status === "completed") {
+        res.status(400).json({ message: "This goal is already completed." });
         return;
       }
 
@@ -126,6 +138,7 @@ export const goalController = {
     }
   },
 
+  // PATCH /goals/:id/redo
   redo: async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = (req.user as any)?.id ?? (req.user as any)?._id;
@@ -135,7 +148,7 @@ export const goalController = {
       }
 
       const goal = await GoalAccountModel.findOne({
-        id: req.params.id,
+        _id: toObjectId(req.params.id),
         userId,
       });
       if (!goal) {
@@ -163,6 +176,7 @@ export const goalController = {
     }
   },
 
+  // DELETE /goals/:id
   delete: async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = (req.user as any)?.id ?? (req.user as any)?._id;
@@ -172,7 +186,7 @@ export const goalController = {
       }
 
       const goal = await GoalAccountModel.findOne({
-        id: req.params.id,
+        _id: toObjectId(req.params.id),
         userId,
       });
       if (!goal) {
@@ -195,7 +209,6 @@ export const goalController = {
       res.status(500).json({ message: error.message });
     }
   },
-
 };
 
 export default goalController;

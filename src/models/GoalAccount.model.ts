@@ -1,4 +1,4 @@
-import mongoose, { Schema, type Document, type ObjectId} from "mongoose";
+import mongoose, { Schema, type Document, type ObjectId } from "mongoose";
 
 export interface IGoal extends Document {
   userId: ObjectId;
@@ -24,7 +24,7 @@ const GoalSchema = new Schema<IGoal>(
     endDate: { type: Date, required: true },
     status: { type: String, enum: ["active", "completed"], default: "active" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model<IGoal>("Goal", GoalSchema);

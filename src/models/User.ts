@@ -17,7 +17,7 @@ export interface IUser extends Document {
 }
 
 const UserSchema: Schema<IUser> = new Schema({
-  googleId: { type: String, unique: true, sparse: true }, 
+  googleId: { type: String, unique: true, sparse: true },
   email: { type: String, required: true, unique: true },
   password: { type: String },
   first_name: { type: String, required: true },
@@ -28,7 +28,6 @@ const UserSchema: Schema<IUser> = new Schema({
   otpExpires: { type: Number, default: undefined },
   isVerified: { type: Boolean, default: false },
   role: { type: String, enum: ["user", "admin"], default: "user" },
-
 });
 
 UserSchema.pre<IUser>("save", async function (this: IUser) {

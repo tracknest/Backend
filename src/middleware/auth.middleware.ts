@@ -15,7 +15,7 @@ const extractBearerToken = (req: Request): string | null => {
 export const authenticate = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const token = extractBearerToken(req);
@@ -27,7 +27,9 @@ export const authenticate = async (
 
     const blocked = await isTokenBlocked(token);
     if (blocked) {
-      res.status(401).json({ message: "Unauthorized — token has been revoked" });
+      res
+        .status(401)
+        .json({ message: "Unauthorized — token has been revoked" });
       return;
     }
 
@@ -42,13 +44,15 @@ export const authenticate = async (
         }
 
         if (!user) {
-          res.status(401).json({ message: "Unauthorized — invalid or expired token" });
+          res
+            .status(401)
+            .json({ message: "Unauthorized — invalid or expired token" });
           return;
         }
 
         req.user = user;
         next();
-      }
+      },
     )(req, res);
   } catch (err) {
     logger.error("[authenticate] " + err);
@@ -60,7 +64,7 @@ export const authenticate = async (
 export const optionalAuthenticate = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const token = extractBearerToken(req);
@@ -87,7 +91,7 @@ export const optionalAuthenticate = async (
         }
         // Always continue regardless of token validity
         next();
-      }
+      },
     )(req, res);
   } catch (err) {
     logger.error("[optionalAuthenticate] " + err);

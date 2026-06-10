@@ -1,12 +1,11 @@
 import winston from "winston";
 import path from "path";
 
-
 const levels = {
   error: 0,
-  warn:  1,
-  info:  2,
-  http:  3,
+  warn: 1,
+  info: 2,
+  http: 3,
   debug: 4,
 };
 
@@ -16,9 +15,9 @@ const currentLevel = (): string => {
 
 winston.addColors({
   error: "red",
-  warn:  "yellow",
-  info:  "green",
-  http:  "magenta",
+  warn: "yellow",
+  info: "green",
+  http: "magenta",
   debug: "cyan",
 });
 
@@ -26,7 +25,7 @@ winston.addColors({
 const baseFormat = winston.format.combine(
   winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
   winston.format.errors({ stack: true }), // include stack trace on Error objects
-  winston.format.splat(),                  // enables printf-style: logger.info("Hello %s", name)
+  winston.format.splat(), // enables printf-style: logger.info("Hello %s", name)
 );
 
 // Pretty coloured output for the terminal (development only)
@@ -37,14 +36,11 @@ const consoleFormat = winston.format.combine(
     return stack
       ? `${timestamp} [${level}]: ${message}\n${stack}`
       : `${timestamp} [${level}]: ${message}`;
-  })
+  }),
 );
 
 // Structured JSON for log aggregators (Datadog, Logtail, CloudWatch etc.)
-const fileFormat = winston.format.combine(
-  baseFormat,
-  winston.format.json()
-);
+const fileFormat = winston.format.combine(baseFormat, winston.format.json());
 
 const transports: winston.transport[] = [
   // Always log to console
@@ -59,22 +55,22 @@ if (process.env.NODE_ENV === "production") {
     // All logs at warn level and above
     new winston.transports.File({
       filename: path.join("logs", "error.log"),
-      level:    "error",
-      format:   fileFormat,
-      maxsize:  10 * 1024 * 1024, // 10MB per file
-      maxFiles: 5,                 // keep last 5 rotated files
+      level: "error",
+      format: fileFormat,
+      maxsize: 10 * 1024 * 1024, // 10MB per file
+      maxFiles: 5, // keep last 5 rotated files
     }),
     new winston.transports.File({
       filename: path.join("logs", "combined.log"),
-      format:   fileFormat,
-      maxsize:  10 * 1024 * 1024,
+      format: fileFormat,
+      maxsize: 10 * 1024 * 1024,
       maxFiles: 5,
-    })
+    }),
   );
 }
 
 const logger = winston.createLogger({
-  level:       currentLevel(),
+  level: currentLevel(),
   levels,
   transports,
   exitOnError: false,

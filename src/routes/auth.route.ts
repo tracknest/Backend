@@ -17,7 +17,11 @@ import {
   getProfile,
   updateProfile,
 } from "../controllers/auth/profile.controller.ts";
-import { sendOtp, verifyOtp, otpResend } from "../controllers/auth/otp.controller.ts";
+import {
+  sendOtp,
+  verifyOtp,
+  otpResend,
+} from "../controllers/auth/otp.controller.ts";
 
 const router = Router();
 

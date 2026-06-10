@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import User from "../../models/User.ts";
 
-
 export const getProfile = async (req: Request, res: Response) => {
   try {
     const userId = (req.user as any)?._id;
@@ -46,30 +45,32 @@ export const updateProfile = async (
     ).select("-password");
 
     if (!updatedUser) {
-        res.status(404).json({message: "User not found"});
-        return;
+      res.status(404).json({ message: "User not found" });
+      return;
     }
 
-    res.status(200).json({message: "Profile update successfully", user: updatedUser})
+    res
+      .status(200)
+      .json({ message: "Profile update successfully", user: updatedUser });
   } catch (error) {
     console.error("[updateProfile]", error);
-    res.status(500).json({message: "Internal server error"})
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
-
-
-
-export const deleteAccount = async (req: Request, res: Response): Promise<void> => {
+export const deleteAccount = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const userId = (req.user as any)?._id;
- 
+
     const deleted = await User.findByIdAndDelete(userId);
     if (!deleted) {
       res.status(404).json({ message: "User not found" });
       return;
     }
- 
+
     res.status(200).json({ message: "Account deleted successfully" });
   } catch (err) {
     console.error("[deleteAccount]", err);

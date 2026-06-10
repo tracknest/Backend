@@ -34,11 +34,9 @@ export const forgotPassword = async (
     const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
-      res
-        .status(200)
-        .json({
-          message: "If that email is registered, a reset code has been sent.",
-        });
+      res.status(200).json({
+        message: "If that email is registered, a reset code has been sent.",
+      });
       return;
     }
 
@@ -58,11 +56,9 @@ export const forgotPassword = async (
       RESET_TOKEN_EXPIRY_MINUTES,
     );
 
-    res
-      .status(200)
-      .json({
-        message: "If that email is registered, a reset code has been sent.",
-      });
+    res.status(200).json({
+      message: "If that email is registered, a reset code has been sent.",
+    });
   } catch (err) {
     console.error("[forgotPassword]", err);
     res.status(500).json({ message: "Internal server error" });
@@ -98,11 +94,9 @@ export const changePassword = async (
     }
 
     if (!user.password) {
-      res
-        .status(400)
-        .json({
-          message: "This account uses Google login — no password to change",
-        });
+      res.status(400).json({
+        message: "This account uses Google login — no password to change",
+      });
       return;
     }
 
@@ -160,11 +154,9 @@ export const resetPassword = async (
     }
 
     if (!pending.isVerified) {
-      res
-        .status(400)
-        .json({
-          message: "Please verify your OTP first before resetting password.",
-        });
+      res.status(400).json({
+        message: "Please verify your OTP first before resetting password.",
+      });
       return;
     }
 
@@ -173,7 +165,6 @@ export const resetPassword = async (
       res.status(400).json({ message: "Reset code has expired" });
       return;
     }
-   
 
     const user = await User.findOne({ email: normalizedEmail });
     if (!user) {

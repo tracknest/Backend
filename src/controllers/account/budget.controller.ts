@@ -1,9 +1,13 @@
 import type { Request, Response } from "express";
 import type { CreateBudgetDTO, UpdateBudgetDTO } from "../../dto/budget.dto.ts";
+import { Types } from "mongoose";
 import BudgetAccount from "../../models/BudgetAccount.ts";
-import User from "../../models/User.ts";
+
+const toObjectId = (id: string | string[] | undefined) =>
+  new Types.ObjectId(String(id));
 
 export const budgetController = {
+  // POST /budgets
   create: async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = (req.user as any)?.id ?? (req.user as any)?._id;
@@ -69,15 +73,14 @@ export const budgetController = {
       }
 
       const budget = await BudgetAccount.findOne({
-        _id: req.params.id,
+        _id: toObjectId(req.params.id),
         userId,
-      } as any);
+      });
       if (!budget) {
         res.status(404).json({ message: "Budget not found" });
         return;
       }
 
-      // Sort items by most spent for the "most spent" list
       const mostSpent = [...budget.items].sort((a, b) => b.spent - a.spent);
 
       res.status(200).json({ budget, mostSpent });
@@ -87,7 +90,6 @@ export const budgetController = {
   },
 
   // PATCH /budgets/:id
-  // Can update title, period, or items
   update: async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = (req.user as any)?.id ?? (req.user as any)?._id;
@@ -97,15 +99,14 @@ export const budgetController = {
       }
 
       const budget = await BudgetAccount.findOne({
-        _id: req.params.id,
+        _id: toObjectId(req.params.id),
         userId,
-      } as any);
+      });
       if (!budget) {
         res.status(404).json({ message: "Budget not found" });
         return;
       }
 
-      // items may be optional/not declared on UpdateBudgetDTO, so read body as Partial and cast items loosely
       const { title, period } = req.body as Partial<UpdateBudgetDTO>;
       const items = (req.body as any)?.items;
 
@@ -128,7 +129,6 @@ export const budgetController = {
   },
 
   // PATCH /budgets/:id/spend
-  // Record spending on a specific item: body { itemTitle, amount }
   recordSpend: async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = (req.user as any)?.id ?? (req.user as any)?._id;
@@ -146,9 +146,9 @@ export const budgetController = {
       }
 
       const budget = await BudgetAccount.findOne({
-        _id: req.params.id,
+        _id: toObjectId(req.params.id),
         userId,
-      } as any);
+      });
       if (!budget) {
         res.status(404).json({ message: "Budget not found" });
         return;
@@ -182,9 +182,9 @@ export const budgetController = {
       }
 
       const budget = await BudgetAccount.findOneAndDelete({
-        _id: req.params.id,
+        _id: toObjectId(req.params.id),
         userId,
-      } as any);
+      });
       if (!budget) {
         res.status(404).json({ message: "Budget not found" });
         return;

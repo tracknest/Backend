@@ -1,8 +1,6 @@
 import { createClient } from "redis";
 import logger from "./logger.ts";
 
-
-
 const redisClient = createClient({
   url: process.env.REDIS_URL ?? "redis://localhost:6379",
   socket: {
@@ -18,14 +16,14 @@ const redisClient = createClient({
     },
   },
 });
- 
-redisClient.on("connect",   ()    => logger.info("Redis connected"));
-redisClient.on("ready",     ()    => logger.info("Redis ready"));
-redisClient.on("error",     (err) => logger.error("Redis error: " + err));
+
+redisClient.on("connect", () => logger.info("Redis connected"));
+redisClient.on("ready", () => logger.info("Redis ready"));
+redisClient.on("error", (err) => logger.error("Redis error: " + err));
 redisClient.on("reconnecting", () => logger.warn("Redis reconnecting..."));
- 
+
 export const connectRedis = async (): Promise<void> => {
   await redisClient.connect();
 };
- 
+
 export default redisClient;

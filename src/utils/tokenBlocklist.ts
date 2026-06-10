@@ -4,10 +4,10 @@ const BLOCKLIST_PREFIX = "jwt:blocklist:";
 
 export const blockToken = async (
   token: string,
-  expiresIn: number
+  expiresIn: number,
 ): Promise<void> => {
   await redisClient.set(`${BLOCKLIST_PREFIX}${token}`, "1", {
-    EX: expiresIn, 
+    EX: expiresIn,
   });
 };
 

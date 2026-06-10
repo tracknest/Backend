@@ -44,7 +44,10 @@ const options: swaggerJsdoc.Options = {
 export const swaggerSpec = swaggerJsdoc(options);
 
 export default (app: Express): void => {
-  if (process.env.NODE_ENV !== "production" || process.env.ENABLE_SWAGGER === "true") {
+  if (
+    process.env.NODE_ENV !== "production" ||
+    process.env.ENABLE_SWAGGER === "true"
+  ) {
     app.use(
       "/api-docs",
       swaggerUi.serve,
@@ -72,7 +75,9 @@ export default (app: Express): void => {
       (swaggerSpec as { paths?: object }).paths ?? {},
     ).length;
 
-    console.log(`[swagger] Docs available at https://backend-ed2z.onrender.com/api-docs`);
+    console.log(
+      `[swagger] Docs available at https://backend-ed2z.onrender.com/api-docs`,
+    );
     console.log(`[swagger] Routes glob  : ${routesGlob}`);
     console.log(`[swagger] Paths found  : ${pathCount}`);
 

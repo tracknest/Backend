@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env # loads your local .env automatically
+    volumes:
+      - .:/app # hot reload if using nodemon
+      - /app/node_modules
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"

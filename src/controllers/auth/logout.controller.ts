@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 import { blockToken } from "../../utils/tokenBlocklist.ts";
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
@@ -35,7 +35,6 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
 
     await blockToken(token, expiresIn);
     res.status(200).json({ message: "Logged out successfully" });
-   
   } catch (err) {
     console.error("[logout]", err);
     res.status(500).json({ message: "Internal server error" });

@@ -64,12 +64,12 @@ export const sendOtpEmail = async (
   to: string,
   firstName: string,
   otp: string,
-  expiresInMinutes: number = 10
+  expiresInMinutes: number = 10,
 ): Promise<void> => {
   try {
     // 3. Generate HTML using the template
     const htmlContent = otpTemplate(firstName, otp, expiresInMinutes);
-    
+
     // 4. Send email
     await send(to, `${otp} is your TrackNest verification code`, htmlContent);
   } catch (err) {

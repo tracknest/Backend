@@ -9,8 +9,8 @@ export interface IBudgetItem {
 export interface IBudget extends Document {
   userId: ObjectId;
   title: string;
-  totalBudget: number; 
-  totalSpent: number; 
+  totalBudget: number;
+  totalSpent: number;
   period: "daily" | "weekly" | "monthly" | "yearly";
   items: IBudgetItem[];
   status: "active" | "over";
@@ -43,7 +43,6 @@ const BudgetSchema = new Schema<IBudget>(
   },
   { timestamps: true },
 );
-
 
 BudgetSchema.pre<IBudget>("save", function (next) {
   this.totalBudget = this.items.reduce((sum, i) => sum + i.amount, 0);

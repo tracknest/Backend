@@ -1,7 +1,9 @@
 import { baseTemplate } from "./base.ts";
 
 const formatCurrency = (amount: number) =>
-  new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(amount);
+  new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(
+    amount,
+  );
 
 const formatDate = (date?: Date) =>
   (date ?? new Date()).toLocaleString("en-NG", {
@@ -11,7 +13,12 @@ const formatDate = (date?: Date) =>
 
 // ─── Main Account ────────────────────────────────────────────────────────────
 
-export const depositTemplate = (firstName: string, amount: number, newBalance: number, ref?: string) =>
+export const depositTemplate = (
+  firstName: string,
+  amount: number,
+  newBalance: number,
+  ref?: string,
+) =>
   baseTemplate(
     `
     <p class="greeting">Deposit successful 💰</p>
@@ -24,10 +31,15 @@ export const depositTemplate = (firstName: string, amount: number, newBalance: n
       <div class="card-row"><span class="label">Status</span><span class="badge badge-green">Successful</span></div>
     </div>
   `,
-    `You deposited ${formatCurrency(amount)} into your TrackNest account.`
+    `You deposited ${formatCurrency(amount)} into your TrackNest account.`,
   );
 
-export const withdrawalTemplate = (firstName: string, amount: number, newBalance: number, ref?: string) =>
+export const withdrawalTemplate = (
+  firstName: string,
+  amount: number,
+  newBalance: number,
+  ref?: string,
+) =>
   baseTemplate(
     `
     <p class="greeting">Withdrawal processed</p>
@@ -41,12 +53,16 @@ export const withdrawalTemplate = (firstName: string, amount: number, newBalance
     </div>
     <div class="warning">⚠️ If you didn't authorize this, contact support immediately.</div>
   `,
-    `Withdrawal of ${formatCurrency(amount)} from your TrackNest account.`
+    `Withdrawal of ${formatCurrency(amount)} from your TrackNest account.`,
   );
 
 // ─── Budget ───────────────────────────────────────────────────────────────────
 
-export const budgetAddedTemplate = (firstName: string, budgetName: string, limit: number) =>
+export const budgetAddedTemplate = (
+  firstName: string,
+  budgetName: string,
+  limit: number,
+) =>
   baseTemplate(
     `
     <p class="greeting">Budget created 📊</p>
@@ -59,7 +75,7 @@ export const budgetAddedTemplate = (firstName: string, budgetName: string, limit
     </div>
     <a href="${process.env.CLIENT_URL}/budgets" class="btn">View Budgets →</a>
   `,
-    `New budget "${budgetName}" created on TrackNest.`
+    `New budget "${budgetName}" created on TrackNest.`,
   );
 
 export const budgetRemovedTemplate = (firstName: string, budgetName: string) =>
@@ -70,10 +86,15 @@ export const budgetRemovedTemplate = (firstName: string, budgetName: string) =>
     <p class="text">Any funds that were allocated to this budget have been returned to your main balance.</p>
     <a href="${process.env.CLIENT_URL}/budgets" class="btn">View Budgets →</a>
   `,
-    `Budget "${budgetName}" was removed from TrackNest.`
+    `Budget "${budgetName}" was removed from TrackNest.`,
   );
 
-export const budgetDepositTemplate = (firstName: string, budgetName: string, amount: number, budgetBalance: number) =>
+export const budgetDepositTemplate = (
+  firstName: string,
+  budgetName: string,
+  amount: number,
+  budgetBalance: number,
+) =>
   baseTemplate(
     `
     <p class="greeting">Funds added to budget 📊</p>
@@ -85,10 +106,15 @@ export const budgetDepositTemplate = (firstName: string, budgetName: string, amo
       <div class="card-row"><span class="label">Date</span><span class="value">${formatDate()}</span></div>
     </div>
   `,
-    `${formatCurrency(amount)} added to "${budgetName}" budget.`
+    `${formatCurrency(amount)} added to "${budgetName}" budget.`,
   );
 
-export const budgetWithdrawTemplate = (firstName: string, budgetName: string, amount: number, mainBalance: number) =>
+export const budgetWithdrawTemplate = (
+  firstName: string,
+  budgetName: string,
+  amount: number,
+  mainBalance: number,
+) =>
   baseTemplate(
     `
     <p class="greeting">Funds moved to main account</p>
@@ -100,12 +126,17 @@ export const budgetWithdrawTemplate = (firstName: string, budgetName: string, am
       <div class="card-row"><span class="label">Date</span><span class="value">${formatDate()}</span></div>
     </div>
   `,
-    `${formatCurrency(amount)} moved from "${budgetName}" to main account.`
+    `${formatCurrency(amount)} moved from "${budgetName}" to main account.`,
   );
 
 // ─── Goal ─────────────────────────────────────────────────────────────────────
 
-export const goalAddedTemplate = (firstName: string, goalName: string, targetAmount: number, deadline?: string) =>
+export const goalAddedTemplate = (
+  firstName: string,
+  goalName: string,
+  targetAmount: number,
+  deadline?: string,
+) =>
   baseTemplate(
     `
     <p class="greeting">Goal created 🎯</p>
@@ -118,7 +149,7 @@ export const goalAddedTemplate = (firstName: string, goalName: string, targetAmo
     </div>
     <a href="${process.env.CLIENT_URL}/goals" class="btn">View Goals →</a>
   `,
-    `New goal "${goalName}" created on TrackNest.`
+    `New goal "${goalName}" created on TrackNest.`,
   );
 
 export const goalRemovedTemplate = (firstName: string, goalName: string) =>
@@ -129,10 +160,16 @@ export const goalRemovedTemplate = (firstName: string, goalName: string) =>
     <p class="text">Any funds saved towards this goal have been returned to your main balance.</p>
     <a href="${process.env.CLIENT_URL}/goals" class="btn">View Goals →</a>
   `,
-    `Goal "${goalName}" was removed from TrackNest.`
+    `Goal "${goalName}" was removed from TrackNest.`,
   );
 
-export const goalDepositTemplate = (firstName: string, goalName: string, amount: number, savedSoFar: number, targetAmount: number) => {
+export const goalDepositTemplate = (
+  firstName: string,
+  goalName: string,
+  amount: number,
+  savedSoFar: number,
+  targetAmount: number,
+) => {
   const progress = Math.min(Math.round((savedSoFar / targetAmount) * 100), 100);
   return baseTemplate(
     `
@@ -147,11 +184,16 @@ export const goalDepositTemplate = (firstName: string, goalName: string, amount:
     </div>
     ${progress >= 100 ? `<p class="text" style="color:#22c55e; font-weight:600; text-align:center;">🎉 Congratulations! You've reached your goal!</p>` : ""}
   `,
-    `${formatCurrency(amount)} added to goal "${goalName}".`
+    `${formatCurrency(amount)} added to goal "${goalName}".`,
   );
 };
 
-export const goalWithdrawTemplate = (firstName: string, goalName: string, amount: number, mainBalance: number) =>
+export const goalWithdrawTemplate = (
+  firstName: string,
+  goalName: string,
+  amount: number,
+  mainBalance: number,
+) =>
   baseTemplate(
     `
     <p class="greeting">Funds moved from goal</p>
@@ -163,5 +205,5 @@ export const goalWithdrawTemplate = (firstName: string, goalName: string, amount
       <div class="card-row"><span class="label">Date</span><span class="value">${formatDate()}</span></div>
     </div>
   `,
-    `${formatCurrency(amount)} moved from goal "${goalName}" to main account.`
+    `${formatCurrency(amount)} moved from goal "${goalName}" to main account.`,
   );

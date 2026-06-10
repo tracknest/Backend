@@ -13,14 +13,14 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const normalizedEmail = email.toLowerCase().trim(); 
+    const normalizedEmail = email.toLowerCase().trim();
 
     const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
       res.status(401).json({ message: "Invalid email or password" });
       return;
     }
-    
+
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       res.status(401).json({ message: "Invalid email or password" });
@@ -37,9 +37,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const ipAddress = forwardedFor || req.socket.remoteAddress || "unknown";
 
     const { password: _, ...safeUser } = user.toObject();
-    
-     sendLoginEmail(normalizedEmail, user.first_name, ipAddress).catch((err) =>
-      console.error("[login] Failed to send login email:", err)
+
+    sendLoginEmail(normalizedEmail, user.first_name, ipAddress).catch((err) =>
+      console.error("[login] Failed to send login email:", err),
     );
 
     res

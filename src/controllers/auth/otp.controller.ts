@@ -5,7 +5,6 @@ import { sendOtpEmail, sendSignupEmail } from "../../email/emailService.ts";
 import { pendingRegistrations } from "./signup.controller.ts";
 import { pendingResets } from "./password.controller.ts";
 
-
 const OTP_EXPIRE_TIME = 15; // 15 minutes in milliseconds
 
 export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
@@ -46,7 +45,9 @@ export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
       pendingRegistrations.delete(normalizedEmail);
       await sendSignupEmail(user.email, user.first_name);
 
-      res.status(201).json({ message: "Account created successfully. You can now log in." });
+      res
+        .status(201)
+        .json({ message: "Account created successfully. You can now log in." });
       return;
     }
 
@@ -54,7 +55,8 @@ export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
 
     if (pendingReset) {
       const isValid =
-        otpHash === pendingReset.otpHash && pendingReset.otpExpires > Date.now();
+        otpHash === pendingReset.otpHash &&
+        pendingReset.otpExpires > Date.now();
 
       if (!isValid) {
         res.status(400).json({ message: "Invalid or expired OTP" });
@@ -63,15 +65,15 @@ export const verifyOtp = async (req: Request, res: Response): Promise<void> => {
 
       // Mark as verified
       pendingReset.isVerified = true;
-      
+
       // Extend expiry time (give more time to complete reset)
       pendingReset.otpExpires = Date.now() + OTP_EXPIRE_TIME * 60 * 1000; // 15 more minutes
 
       pendingResets.set(normalizedEmail, pendingReset);
 
-      res.status(200).json({ 
+      res.status(200).json({
         message: "OTP verified successfully. You can now reset your password.",
-        verified: true
+        verified: true,
       });
       return;
     }
@@ -169,4 +171,4 @@ export const otpResend = async (req: Request, res: Response): Promise<void> => {
     console.error("[otpResend]", err);
     res.status(500).json({ message: "Internal server error" });
   }
-}
+};

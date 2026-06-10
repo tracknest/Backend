@@ -61,7 +61,7 @@ io.on("connection", (socket) => {
 const mongoSanitize = (
   req: express.Request,
   _res: express.Response,
-  next: express.NextFunction
+  next: express.NextFunction,
 ): void => {
   const sanitize = (obj: Record<string, unknown>): void => {
     for (const key of Object.keys(obj)) {
@@ -93,7 +93,7 @@ const connectDB = async (): Promise<void> => {
     } else {
       logger.warn(
         "⚠️  Running without MongoDB — DB-dependent routes will fail. " +
-          "Fix: whitelist your IP on MongoDB Atlas → Network Access."
+          "Fix: whitelist your IP on MongoDB Atlas → Network Access.",
       );
     }
   }
@@ -110,7 +110,7 @@ const startServer = async (): Promise<void> => {
   app.use(cors());
   app.use(helmet());
   app.use(compression());
-  app.use(express.json({ limit: "10kb" }));         // ← body parsed HERE, before routes
+  app.use(express.json({ limit: "10kb" })); // ← body parsed HERE, before routes
   app.use(express.urlencoded({ extended: true, limit: "10kb" }));
   app.use(mongoSanitize);
   app.use(hpp());
@@ -144,7 +144,7 @@ const startServer = async (): Promise<void> => {
         sameSite: "lax",
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       },
-    })
+    }),
   );
 
   // 5. Passport — must come after session middleware
@@ -190,7 +190,7 @@ const startServer = async (): Promise<void> => {
   // 14. Start listening
   server.listen(PORT, () => {
     logger.info(
-      `Server running on port ${PORT} [${process.env.NODE_ENV ?? "development"}]`
+      `Server running on port ${PORT} [${process.env.NODE_ENV ?? "development"}]`,
     );
   });
 };
