@@ -103,7 +103,7 @@ const connectDB = async (): Promise<void> => {
 };
 
 // ─── Server Bootstrap ─────────────────────────────────────────────────────────
-const PORT = Number(process.env.PORT) || 5000;
+const PORT = Number(process.env.PORT) || 3000;
 
 const startServer = async (): Promise<void> => {
   // 1. Connect Redis first — rate limiter and session store depend on it
