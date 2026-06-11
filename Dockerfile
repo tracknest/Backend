@@ -1,14 +1,15 @@
-FROM node:22-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
 FROM node:22-alpine
 WORKDIR /app
+
+# Install dependencies
 COPY package*.json ./
-RUN npm ci --omit=dev
-COPY --from=builder /app/src ./src
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Expose port
 EXPOSE 3000
-CMD ["node", "src/index.ts"]
+
+# Start server
+CMD ["npx", "tsx", "src/index.ts"]

@@ -2,5 +2,12 @@ node_modules
 dist
 .env
 .env.prod
-*.log
 .git
+.gitignore
+*.log
+dist
+coverage
+.husky
+.eslintrc*
+.prettierrc*
+README.md
