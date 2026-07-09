@@ -15,7 +15,7 @@ router.use(authenticate);
 
 /**
  * @openapi
- * /api/v1/budget:
+ * /api/v1/budgets:
  *   post:
  *     tags: [Budget]
  *     summary: Create a new budget
@@ -101,7 +101,7 @@ router.get("/", budgetController.getAll);
 
 /**
  * @openapi
- * /api/v1/budget/{id}:
+ * /api/v1/budgets/{id}:
  *   get:
  *     tags: [Budget]
  *     summary: Get a single budget by ID
@@ -243,7 +243,7 @@ router.delete("/:id", budgetController.delete);
 
 /**
  * @openapi
- * /api/v1/budget/{id}/spend:
+ * /api/v1/budgets/{id}/spend:
  *   patch:
  *     tags: [Budget]
  *     summary: Record spending on a budget item

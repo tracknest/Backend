@@ -15,7 +15,7 @@ router.use(authenticate);
 
 /**
  * @openapi
- * /api/v1/goal:
+ * /api/v1/goals:
  *   post:
  *     tags: [Goal]
  *     summary: Create a new savings goal
@@ -91,7 +91,7 @@ router.get("/", goalController.getAll);
 
 /**
  * @openapi
- * /api/v1/goal/{id}:
+ * /api/v1/goals/{id}:
  *   get:
  *     tags: [Goal]
  *     summary: Get a single savings goal by ID
@@ -185,7 +185,7 @@ router.delete("/:id", goalController.delete);
 
 /**
  * @openapi
- * /api/v1/goal/{id}/deposit:
+ * /api/v1/goals/{id}/deposit:
  *   patch:
  *     tags: [Goal]
  *     summary: Deposit an amount toward a savings goal
@@ -247,7 +247,7 @@ router.patch("/:id/deposit", goalController.deposit);
 
 /**
  * @openapi
- * /api/v1/goal/{id}/redo:
+ * /api/v1/goals/{id}/redo:
  *   post:
  *     tags: [Goal]
  *     summary: Reset a savings goal
