@@ -166,8 +166,8 @@ const startServer = async (): Promise<void> => {
   // 7. Routes — registered after all middleware is in place
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/account", accountRoutes);
-  app.use("/api/v1/budgets", budgetRoutes);
-  app.use("/api/v1/goals", goalRoutes);
+  app.use("/api/v1/budget", budgetRoutes);
+  app.use("/api/v1/goal", goalRoutes);
 
   // 8. Swagger docs
   swaggerDocs(app);
